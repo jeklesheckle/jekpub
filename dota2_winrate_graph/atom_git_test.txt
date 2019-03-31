@@ -1,2 +1,2 @@
-alright well im gonna add some text here
-and a little more here
+seems like atom's not gonna be able to keep me from using my terminal but
+that doesn't seem like such a bad thing.
