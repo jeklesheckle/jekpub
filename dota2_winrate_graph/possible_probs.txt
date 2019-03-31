@@ -1,0 +1,1 @@
+* while setting up for steam condenser I was prompted to install the bzip2-ruby gem but I was unable to get it installed. Installed rbzip2 instead.
