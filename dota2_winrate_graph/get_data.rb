@@ -16,10 +16,15 @@ Developer notes:
 
 API key: 37FB080E73DCCC7BA31BC11B52C5C453
 
-Current status: fully functional for 100 matches.
+Current status: fully functional for 100 matches. 
+Visualization status: need to gem install ChunkyPNG. Writing out beginning test
+  at end of file
 
 Goals:
 * visualize the data (ChunkyPNG?)
+	- I think this program is simple enough that we can include the visualization
+	  within this file. We can generate the png with ChunkyPNG. I think a simple
+	  shell script would allow me to run this code then open the resulting image.
 * less hardcoded numbers
 * more matches
 * faster requests (Opendota API?)
@@ -27,6 +32,7 @@ Goals:
 
 require 'httparty'
 require 'json'
+require 'chunky_png'
 
 #returns an HTTParty Response obj that 100 match IDs will be extracted from
 def getMatchHistory()
@@ -96,3 +102,10 @@ match_id_array.each do |id|
 end
 
 puts "radiant: #{radiant_wins}\tdire:#{dire_wins}"
+
+# generate dark grey 250px X 550px png object
+graph_PNG = ChunkyPNG::Image.new(250, 550, 0x33333300)
+# add basic template stuff like team names, frames, borders
+# add the actual bars for each team s
+# save the PNG
+graph_PNG.save('wins.png', :interlace => true)
