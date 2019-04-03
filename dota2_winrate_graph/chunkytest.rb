@@ -2,8 +2,7 @@
 
 =begin
 Current TODO:
-* add the rest of the characters
-* scale them up by a factor of 4
+* test all chars, find coords
 * add the functions for the xaxis
 * add the function for the graph bars 
 * transfer everything over to get_data
@@ -19,7 +18,55 @@ all_characters = {
 			true, false, false, true,
 			true, true, true, false,
 			true, false, false, true,
-			true, false, false, true]
+			true, false, false, true],
+"small_r" => [false, false, false, false,
+			  true, false, false, false,
+			  true, true, true, false,
+			  true, false, false, true,
+			  true, false, false, false,
+			  true, false, false, false],
+"small_a" => [false, false, false, false,
+			  false, false, false, false,
+			  false, true, true, false,
+			  true, false, true, false,
+			  true, false, true, false,
+			  true, true, false, true],
+"big_d" => [true, true, true, false,
+			true, false, false, true,
+			true, false, false, true
+			true, false, false, true,
+			true, false, false, true
+			true, true, true, false],
+"little_d" => [false, false, false, false,
+			   false, false, true, false,
+			   false, false, true, false,
+			   false, true, true, false,
+			   true, false, true, false,
+			   true, true, false, true],
+"little_i" => [false, false, false, false,
+			   false, true, false, false,
+			   false, false, false, false,
+			   false, true, false, false,
+			   false, true, false, false,
+			   false, true, false, false],
+"little_n" => [false, false, false, false,
+			   false, false, false, false,
+			   true, false, false, false,
+			   true, true, true, false,
+			   true, false, false, true,
+			   true, false, false, true],
+"little_t" => [false, false, false, false,
+			   false, false, true, false,
+			   false, true, true, true,
+			   false, false, true, false,
+			   false, false, true, false,
+			   false, true, false, false],
+"little_e" => [false, false, false, false,
+			   false, true, true, false,
+			   true, false, false, true,
+			   true, true, true, true,
+			   true, false, false, false,
+			   false, true, true, true]
 }
 
 # graphs the x-axis of the bar graph 
@@ -35,7 +82,8 @@ end
 # returns true if the char was graphed, false
 # otherwise.
 # default color is pure black.
-def add_char_to_png(png_obj, characters, character, start_x, start_y, color = nil)
+# default scale is 4x (16x as many pixels)
+def add_char_to_png(png_obj, characters, character, start_x, start_y, color = nil, scale = nil)
 	#check to see if character is one I've precoded
 	
 	pixel_map = characters[character]
@@ -46,14 +94,17 @@ def add_char_to_png(png_obj, characters, character, start_x, start_y, color = ni
 	
 	#actually edit the png 
 	if color == nil then color = :black end
+	if scale == nil then scale = 4 end
 	
 	# iterate through the size of a char (4 x 6), filling in
 	# the pixels for the char with color 
-	(0...4).each do |row|
-		(0...6).each do |col|
-			px_map_i = col * 4 + row
-			if pixel_map[px_map_i] then 
-				png_obj[start_x + row, start_y + col] = color
+	(0...(4 * scale)).each do |row|
+		(0...(6 * scale)).each do |col|
+			px_map_i = (col/scale) * 4 + (row/scale)
+			
+			if pixel_map[px_map_i] then
+				# plots extra pixels if scaled up
+				png_obj[row, col] = color
 			end
 		end
 	end
