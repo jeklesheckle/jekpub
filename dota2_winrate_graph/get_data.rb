@@ -21,11 +21,8 @@ Visualization status: need to gem install ChunkyPNG. Writing out beginning test
   at end of file
 
 Goals:
-* visualize the data (ChunkyPNG?)
-	- I think this program is simple enough that we can include the visualization
-	  within this file. We can generate the png with ChunkyPNG. I think a simple
-	  shell script would allow me to run this code then open the resulting image.
-* less hardcoded numbers
+* reduce the delay to simply ensure that it takes no less than
+  a second between requests
 * more matches
 * faster requests (Opendota API?)
 * improve commenting
@@ -40,6 +37,9 @@ require 'chunky_png'
 #=================================================
 # Variables (would be constants if I gave a FRICK)
 #=================================================
+
+# acceptable http statuses
+ACCEPTABLE_HTTP_STATUSES = [200]
 
 # dimensions of resulting image. Keep in mind that
 # making these too small will prevent certain
@@ -278,7 +278,7 @@ match_id_array.each do |id|
 
   # get the status of the request, don't parse if it wasn't good
   id_req_status = match_response.code
-  if id_req_status != 200 then
+  if !(ACCEPTABLE_HTTP_STATUSES.include? id_req_status) then
     puts "status for id: #{id} was #{id_req_status}"
 
   else
