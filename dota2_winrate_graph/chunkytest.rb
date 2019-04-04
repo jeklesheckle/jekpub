@@ -1,14 +1,10 @@
 # just a little ruby file to test out coloring in chunkypng
 
 =begin
-Current TODO:
-* improve commenting on the whole thing really (main file too)
-* improve input checking
-* add the functions for the xaxis
-* add the function for the graph bars 
-* transfer everything over to get_data
-* maybe reimplement characters as binary strings or use some more robust system
-  for character encoding / display
+This file is now officially DITCHED
+moved everything over to main and will only use this for 
+testing. MEANING it will go to absolute shit and there
+will be no further quality control here.
 =end
 
 require 'chunky_png'
@@ -81,8 +77,8 @@ def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
 	if color == nil then color = :black end
 	
 	# actually add the rectangle
-	(0..height).each do |col|
-		(0..width).each do |row|
+	(0...height).each do |row|
+		(0...width).each do |col|
 			png_obj[start_x + col, start_y + row] = color
 		end
 	end
@@ -158,6 +154,8 @@ end
 
 width = 250
 height = 550
+direw = 50
+radiantw = 50
 
 #png[x,y] is the format
 # coords go from 0 to width / height - 1
@@ -166,11 +164,16 @@ png = ChunkyPNG::Image.new(width, height, 0x333333ff)
 
 radiant = ["big_r", "little_a", "little_d", "little_i", "little_a", "little_n", "little_t"]
 dire = ["big_d", "little_i", "little_r", "little_e"]
-add_word_to_png(png, all_characters, radiant, 33, 400, 0xeeeeeeff, 3)
-add_word_to_png(png, all_characters, dire, 158, 400, 0xeeeeeeff, 3)
+add_word_to_png(png, all_characters, radiant, 30, 500, 0xeeeeeeff, 3)
+add_word_to_png(png, all_characters, dire, 150, 500, 0xeeeeeeff, 3)
 
 #will have to do a bit of math to determine where the rectangle starts since they're top-down
-add_rectangle(png, 30, 30, 30, 30)
+# start x is static, start y and height are variable. height is a multiplier of dire/radiantw
+# and start y is just start y of the xaxis minus the height
+add_rectangle(png, 25, 490, 200, 2)
+
+add_rectangle(png, 53, 490 - (radiantw * 6), 50, radiantw * 6, :green)
+add_rectangle(png, 155, 490 - (direw * 6), 50, direw * 6, :red)
 
 png.save('chunkytest.png', :interlace => true)
 

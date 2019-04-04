@@ -28,11 +28,112 @@ Goals:
 * less hardcoded numbers
 * more matches
 * faster requests (Opendota API?)
+* improve commenting
+* improve input checking
+* research ways to reimplement character printing
 =end
 
 require 'httparty'
 require 'json'
 require 'chunky_png'
+
+#=================================================
+# Variables (would be constants if I gave a FRICK)
+#=================================================
+
+# dimensions of resulting image. Keep in mind that
+# making these too small will prevent certain
+# elements of the graph from being generated.
+IMG_WIDTH = 250
+IMG_HEIGHT = 550
+IMG_BG_COLOR = 0x333333ff
+IMG_NAME = "winrates.png"
+
+# variables relating to the contents of the image
+# radiant
+RADIANT_BAR_COLOR = :green
+RADIANT_NAME_X = 30
+NAME_Y = 500
+TEXT_COLOR = 0xeeeeeeff
+TEXT_SCALE = 3
+BAR_SCALE = 6
+RADIANT_BAR_X = 53
+BAR_THICKNESS = 50
+
+# dire
+DIRE_BAR_COLOR = :red
+DIRE_NAME_X = 150
+DIRE_BAR_X = 155
+
+# x-axis
+X_AXIS_X = 25
+X_AXIS_Y = 490
+X_AXIS_LENGTH = 200
+X_AXIS_THICKNESS = 2
+
+# starting at the top left of an image, true if 
+# a pixel is filled in, false otherwise 
+ALL_CHARACTERS = {
+"big_r" => [true, true, true, false,
+			true, false, false, true,
+			true, false, false, true,
+			true, true, true, false,
+			true, false, false, true,
+			true, false, false, true],
+"little_r" => [false, false, false, false,
+			  true, false, false, false,
+			  true, true, true, false,
+			  true, false, false, true,
+			  true, false, false, false,
+			  true, false, false, false],
+"little_a" => [false, false, false, false,
+			  false, false, false, false,
+			  false, true, true, false,
+			  true, false, true, false,
+			  true, false, true, false,
+			  true, true, false, true],
+"big_d" => [true, true, true, false,
+			true, false, false, true,
+			true, false, false, true,
+			true, false, false, true,
+			true, false, false, true,
+			true, true, true, false],
+"little_d" => [false, false, false, false,
+			   false, false, true, false,
+			   false, false, true, false,
+			   false, true, true, false,
+			   true, false, true, false,
+			   true, true, false, true],
+"little_i" => [false, false, false, false,
+			   false, true, false, false,
+			   false, false, false, false,
+			   false, true, false, false,
+			   false, true, false, false,
+			   false, true, false, false],
+"little_n" => [false, false, false, false,
+			   false, false, false, false,
+			   true, false, false, false,
+			   true, true, true, false,
+			   true, false, false, true,
+			   true, false, false, true],
+"little_t" => [false, false, false, false,
+			   false, false, true, false,
+			   false, true, true, true,
+			   false, false, true, false,
+			   false, false, true, false,
+			   false, true, false, false],
+"little_e" => [false, false, false, false,
+			   false, true, true, false,
+			   true, false, false, true,
+			   true, true, true, true,
+			   true, false, false, false,
+			   false, true, true, true]
+}
+
+
+#=============================
+# Functions for data retreival
+#=============================
 
 #returns an HTTParty Response obj that 100 match IDs will be extracted from
 def getMatchHistory()
@@ -57,6 +158,101 @@ def getMatchHistory()
   return response
 end
 
+
+#=================================
+# Functions for data visualization
+#=================================
+
+# graphs a rectangle given top-left start
+# coords, length, thickness, and color 
+def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
+	# check to see if it will go out of bounds (thickness and length)
+	
+	# set default values for nil args
+	if color == nil then color = :black end
+	
+	# actually add the rectangle
+	(0...height).each do |row|
+		(0...width).each do |col|
+			png_obj[start_x + col, start_y + row] = color
+		end
+	end
+end
+
+# graph a character given the character, a png
+# and a top-left location for the character
+# each character is 4 pixels long and 6 tall
+# If input is invalid, will return a message
+# stating and will not alter the png
+# returns true if the char was graphed, false
+# otherwise.
+# default color is pure black.
+# default scale is 4x (16x as many pixels)
+def add_char_to_png(png_obj, characters, character, start_x, start_y, color = nil, scale = nil)
+	#check to see if character is one I've precoded
+	
+	pixel_map = characters[character]
+	if pixel_map == nil then return false end
+	
+	#check to see if you'll go out of bounds
+	
+	
+	#actually edit the png 
+	if color == nil then color = :black end
+	if scale == nil then scale = 4 end
+	
+	# iterate through the size of a char (4 x 6), filling in
+	# the pixels for the char with color 
+	(0...(4 * scale)).each do |row|
+		(0...(6 * scale)).each do |col|
+			px_map_i = (col/scale) * 4 + (row/scale)
+			
+			if pixel_map[px_map_i] then
+				# plots extra pixels if scaled up
+				png_obj[start_x + row, start_y + col] = color
+			end
+		end
+	end
+end
+
+# adds a word to the png given a top-left starting coord,
+# an array of characters, a color, and a scale.
+# default color is black, scale is 4x
+def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color = nil, scale = nil)
+	# may be able to check both at the same time
+	# check to make sure coords won't go out of bounds
+	# check to make sure all characters are in the list
+	
+	# add default values for any nil args
+	if color == nil then color = :black end
+	if scale == nil then scale = 4 end
+	
+	# generate an int to keep track of the space between chars
+	gap = 0
+	if scale > 4 then 
+		gap = 4
+	else
+		gap = scale
+	end
+	
+	size_of_char = 4 * scale
+	diff_btw_char_start_xs = size_of_char + gap
+	
+	# for each char in chars_to_add, add it to the png
+	current_x = start_x
+	
+	chars_to_add.each do |current_char|
+		add_char_to_png(png_obj, characters, current_char, current_x, start_y, color, scale)
+		current_x += diff_btw_char_start_xs
+	end
+end
+
+
+#=====================
+# The actual code part
+#=====================
+
+#### Getting the wins
 radiant_wins = 0
 dire_wins = 0
 
@@ -103,9 +299,25 @@ end
 
 puts "radiant: #{radiant_wins}\tdire:#{dire_wins}"
 
-# generate dark grey 250px X 550px png object
-graph_PNG = ChunkyPNG::Image.new(250, 550, 0x33333300)
-# add basic template stuff like team names, frames, borders
-# add the actual bars for each team s
-# save the PNG
-graph_PNG.save('wins.png', :interlace => true)
+
+### Generating the image
+
+png = ChunkyPNG::Image.new(IMG_WIDTH, IMG_HEIGHT, IMG_BG_COLOR)
+
+radiant = ["big_r", "little_a", "little_d", "little_i", "little_a", "little_n", "little_t"]
+dire = ["big_d", "little_i", "little_r", "little_e"]
+
+add_word_to_png(png, ALL_CHARACTERS, radiant, RADIANT_NAME_X, NAME_Y, TEXT_COLOR, TEXT_SCALE)
+add_word_to_png(png, ALL_CHARACTERS, dire, DIRE_NAME_X, NAME_Y, TEXT_COLOR, TEXT_SCALE)
+
+# this is the x-axis
+add_rectangle(png, X_AXIS_X, X_AXIS_Y, X_AXIS_LENGTH, X_AXIS_THICKNESS)
+
+# add the team bars
+rad_bar_ht = radiant_wins * BAR_SCALE
+dire_bar_ht = dire_wins * BAR_SCALE
+
+add_rectangle(png, RADIANT_BAR_X, X_AXIS_Y - rad_bar_ht, BAR_THICKNESS, rad_bar_ht, RADIANT_BAR_COLOR)
+add_rectangle(png, DIRE_BAR_X, X_AXIS_Y - dire_bar_ht, BAR_THICKNESS, dire_bar_ht, DIRE_BAR_COLOR)
+
+png.save(IMG_NAME, :interlace => true)
