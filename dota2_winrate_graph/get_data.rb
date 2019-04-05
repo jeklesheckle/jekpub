@@ -1,6 +1,10 @@
 # uses Steam's WebAPI to fetch data about the 100 most recent all pick matches
 # and finds the winrate of each side (dire/radiant)
 
+## this code will not work unless you store your api key in a file named
+## api_key.txt. you should add that file to your gitignore if you want
+## to avoid publicly publishing your api key, which is a violation of the ToS
+
 =begin
 Links:
 =======
@@ -13,8 +17,6 @@ HTTParty doc: https://github.com/jnunemaker/httparty/tree/master/docs
 =begin
 Developer notes:
 =================
-
-API key: 37FB080E73DCCC7BA31BC11B52C5C453
 
 Current status: fully functional for 100 matches. 
 Visualization status: need to gem install ChunkyPNG. Writing out beginning test
@@ -42,6 +44,9 @@ require 'chunky_png'
 
 # acceptable http statuses
 ACCEPTABLE_HTTP_STATUSES = [200]
+
+# gets the api key from a file, you can change the name / location of the file here
+api_key = File.open("api_key.txt").read
 
 # dimensions of resulting image. Keep in mind that
 # making these too small will prevent certain
@@ -142,7 +147,7 @@ ALL_CHARACTERS = {
 #returns an HTTParty Response obj that 100 match IDs will be extracted from
 def getMatchHistory()
   response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570
-    'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=37FB080E73DCCC7BA31BC11B52C5C453&game_mode=1'
+    "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key}&game_mode=1"
   )
 
   # checks to make sure we got a good response before parsing
@@ -156,7 +161,7 @@ def getMatchHistory()
 
 	# requests the match data using the IDOTA2Match_<ID> interface and a GetMatchHistory call
     response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570"
-      'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=37FB080E73DCCC7BA31BC11B52C5C453&game_mode=1'
+      "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key}&game_mode=1"
     )
   end
 
@@ -251,7 +256,7 @@ def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color =
 	# generates the difference between the start columns of two chars
 	diff_btw_char_start_xs = size_of_char + gap
 	
-	# for each char in chars_to_add, add it to the png
+	# adds the characters to the png
 	current_x = start_x
 	
 	chars_to_add.each do |current_char|
@@ -269,7 +274,6 @@ end
 radiant_wins = 0
 dire_wins = 0
 
-
 # to store matchIDs
 match_id_array = Array.new
 
@@ -282,14 +286,14 @@ json_hash["result"]["matches"].each do |match|
 end
 
 # tries to get the winning team of each match. If a match doesn't provide a proper
-# response to the request, it is ignored.
+# response to the request, it is ignored and the next match is tried.
 match_id_array.each do |id|
-  sleep(1)
+  sleep(1) # need to delay 1 second in order to not violate ToS
   match_response = HTTParty.get(
     "http://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/?key=37FB080E73DCCC7BA31BC11B52C5C453&match_id=#{id}"
   )
 
-  # get the status of the request, don't parse if it wasn't good
+  # get the status of the request, don't parse if it wasn't acceptable
   id_req_status = match_response.code
   if !(ACCEPTABLE_HTTP_STATUSES.include? id_req_status) then
     puts "status for id: #{id} was #{id_req_status}"
@@ -305,7 +309,7 @@ match_id_array.each do |id|
       dire_wins += 1
       puts "dire won"
     else
-      puts "radiant_wins was #{rad_wins}"
+      puts "radiant_wins was #{rad_wins}" #should never happen
     end
   end
 end
@@ -315,22 +319,25 @@ puts "radiant: #{radiant_wins}\tdire:#{dire_wins}"
 
 ### Generating the image
 
+# create a new png object
 png = ChunkyPNG::Image.new(IMG_WIDTH, IMG_HEIGHT, IMG_BG_COLOR)
 
+# create words (arrays of character keys) for each team
 radiant = ["big_r", "little_a", "little_d", "little_i", "little_a", "little_n", "little_t"]
 dire = ["big_d", "little_i", "little_r", "little_e"]
 
+# actually add the teams' names to the png
 add_word_to_png(png, ALL_CHARACTERS, radiant, RADIANT_NAME_X, NAME_Y, TEXT_COLOR, TEXT_SCALE)
 add_word_to_png(png, ALL_CHARACTERS, dire, DIRE_NAME_X, NAME_Y, TEXT_COLOR, TEXT_SCALE)
 
-# this is the x-axis
+# add the x-axis to the png
 add_rectangle(png, X_AXIS_X, X_AXIS_Y, X_AXIS_LENGTH, X_AXIS_THICKNESS)
 
 # add the team bars
 rad_bar_ht = radiant_wins * BAR_SCALE
 dire_bar_ht = dire_wins * BAR_SCALE
-
 add_rectangle(png, RADIANT_BAR_X, X_AXIS_Y - rad_bar_ht, BAR_THICKNESS, rad_bar_ht, RADIANT_BAR_COLOR)
 add_rectangle(png, DIRE_BAR_X, X_AXIS_Y - dire_bar_ht, BAR_THICKNESS, dire_bar_ht, DIRE_BAR_COLOR)
 
+# save the file
 png.save(IMG_NAME, :interlace => true)
