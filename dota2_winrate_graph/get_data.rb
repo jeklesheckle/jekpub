@@ -21,6 +21,8 @@ Visualization status: need to gem install ChunkyPNG. Writing out beginning test
   at end of file
 
 Goals:
+* currently gets very angry if you're not connected to the internet. fix?
+* rename the chars to just be the character they represent
 * reduce the delay to simply ensure that it takes no less than
   a second between requests
 * more matches
@@ -35,7 +37,7 @@ require 'json'
 require 'chunky_png'
 
 #=================================================
-# Variables (would be constants if I gave a FRICK)
+# Variables 
 #=================================================
 
 # acceptable http statuses
@@ -71,8 +73,10 @@ X_AXIS_Y = 490
 X_AXIS_LENGTH = 200
 X_AXIS_THICKNESS = 2
 
-# starting at the top left of an image, true if 
-# a pixel is filled in, false otherwise 
+# list of characters that can be added to a png
+# characters are a "binary" representation of
+# the pixels. top left to bottom right row then col
+# (like the words in a book)
 ALL_CHARACTERS = {
 "big_r" => [true, true, true, false,
 			true, false, false, true,
@@ -137,12 +141,12 @@ ALL_CHARACTERS = {
 
 #returns an HTTParty Response obj that 100 match IDs will be extracted from
 def getMatchHistory()
-  response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570"
+  response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570
     'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=37FB080E73DCCC7BA31BC11B52C5C453&game_mode=1'
   )
 
   # checks to make sure we got a good response before parsing
-  until response.code == 200
+  until ACCEPTABLE_HTTP_STATUSES.include? response.code
     print "failed to get matchIDs, trying again in "
     (5..1).each do |num|
       print "#{num}... "
@@ -150,6 +154,7 @@ def getMatchHistory()
     end
     puts ""
 
+	# requests the match data using the IDOTA2Match_<ID> interface and a GetMatchHistory call
     response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570"
       'https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=37FB080E73DCCC7BA31BC11B52C5C453&game_mode=1'
     )
@@ -163,8 +168,13 @@ end
 # Functions for data visualization
 #=================================
 
-# graphs a rectangle given top-left start
-# coords, length, thickness, and color 
+# adds a rectangle to the png.
+# png_obj: the png to add the rectangle to (Chunky_PNG::Image)
+# start_x: left edge of the rectangle (Int)
+# start_y: top top edge of the rectangle (Int)
+# width: how many columns of pixels the rectangle spans (Int)
+# height: how many rows of pixels the rectangle spans (Int)
+# color: color of rectangle, default is :black (Chunky_PNG::Color / hex representation of rgba color)
 def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
 	# check to see if it will go out of bounds (thickness and length)
 	
@@ -179,49 +189,52 @@ def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
 	end
 end
 
-# graph a character given the character, a png
-# and a top-left location for the character
-# each character is 4 pixels long and 6 tall
-# If input is invalid, will return a message
-# stating and will not alter the png
-# returns true if the char was graphed, false
-# otherwise.
-# default color is pure black.
-# default scale is 4x (16x as many pixels)
+# adds a character to a png. Returns true if the character was added, false otherwise.
+# png_obj: the png to add the characer to (Chunky_PNG::Image)
+# characters: the hash of characters available to add (Hash, see ALL_CHARACTERS)
+# character: the key for a character to be chosen from characters (String)
+# start_x: left edge of the character's 4 x 6 area (Int)
+# start_y: top top edge of the character's 4 x 6 area (Int) 
+# color: color of character, default is :black (Chunky_PNG::Color / hex representation of rgba color)
+# scale: size of the character. 1 is 1px / px, 2 is 4px / px, 3 is 9px / px, etc. Default is 4 (Int)
 def add_char_to_png(png_obj, characters, character, start_x, start_y, color = nil, scale = nil)
-	#check to see if character is one I've precoded
-	
+	#check to see if character is in characters
 	pixel_map = characters[character]
 	if pixel_map == nil then return false end
 	
-	#check to see if you'll go out of bounds
+	#check to see if character will go out of bounds of the png
 	
 	
-	#actually edit the png 
+	#assign default values for nil args
 	if color == nil then color = :black end
 	if scale == nil then scale = 4 end
 	
 	# iterate through the size of a char (4 x 6), filling in
-	# the pixels for the char with color 
+	# the pixels for the char with color
 	(0...(4 * scale)).each do |row|
 		(0...(6 * scale)).each do |col|
 			px_map_i = (col/scale) * 4 + (row/scale)
 			
 			if pixel_map[px_map_i] then
-				# plots extra pixels if scaled up
 				png_obj[start_x + row, start_y + col] = color
 			end
 		end
 	end
 end
 
-# adds a word to the png given a top-left starting coord,
-# an array of characters, a color, and a scale.
-# default color is black, scale is 4x
+# adds multiple chars to a png. Returns true if the word was added, false otherwise.
+# png_obj: the png to add the word to (Chunky_PNG::Image)
+# characters: the hash of characters available to add (Hash, see ALL_CHARACTERS)
+# chars_to_add: an array of characters comprising the word (Array of Strings)
+# start_x: left edge of the word (Int)
+# start_y: top top edge of the word (Int) 
+# color: color of characters, default is :black (Chunky_PNG::Color / hex representation of rgba color)
+# scale: size of the characters. 1 is 1px / px, 2 is 4px / px, 3 is 9px / px, etc. Default is 4 (Int)
 def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color = nil, scale = nil)
 	# may be able to check both at the same time
 	# check to make sure coords won't go out of bounds
 	# check to make sure all characters are in the list
+	size_of_char = 4 * scale
 	
 	# add default values for any nil args
 	if color == nil then color = :black end
@@ -235,7 +248,7 @@ def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color =
 		gap = scale
 	end
 	
-	size_of_char = 4 * scale
+	# generates the difference between the start columns of two chars
 	diff_btw_char_start_xs = size_of_char + gap
 	
 	# for each char in chars_to_add, add it to the png
