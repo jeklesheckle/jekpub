@@ -145,9 +145,9 @@ ALL_CHARACTERS = {
 #=============================
 
 #returns an HTTParty Response obj that 100 match IDs will be extracted from
-def getMatchHistory()
+def getMatchHistory(api_key_arg)
   response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570
-    "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key}&game_mode=1"
+    "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key_arg}&game_mode=1"
   )
 
   # checks to make sure we got a good response before parsing
@@ -161,7 +161,7 @@ def getMatchHistory()
 
 	# requests the match data using the IDOTA2Match_<ID> interface and a GetMatchHistory call
     response = HTTParty.get(  # needed 570 in place of <ID> since dota's ID is 570"
-      "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key}&game_mode=1"
+      "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/?key=#{api_key_arg}&game_mode=1"
     )
   end
 
@@ -180,8 +180,16 @@ end
 # width: how many columns of pixels the rectangle spans (Int)
 # height: how many rows of pixels the rectangle spans (Int)
 # color: color of rectangle, default is :black (Chunky_PNG::Color / hex representation of rgba color)
-def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
+def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)	
 	# check to see if it will go out of bounds (thickness and length)
+	if start_x + width >= png_obj.width then 
+		puts "add_rectangle: out of bounds (width / start_x)"
+		return false
+	end
+	if start_y + height >= png_obj.height then
+		puts "add_rectangle" out of bounds (height / start_y)
+		return false
+	end
 	
 	# set default values for nil args
 	if color == nil then color = :black end
@@ -192,6 +200,8 @@ def add_rectangle(png_obj, start_x, start_y, width, height, color = nil)
 			png_obj[start_x + col, start_y + row] = color
 		end
 	end
+	
+	return true
 end
 
 # adds a character to a png. Returns true if the character was added, false otherwise.
@@ -208,7 +218,11 @@ def add_char_to_png(png_obj, characters, character, start_x, start_y, color = ni
 	if pixel_map == nil then return false end
 	
 	#check to see if character will go out of bounds of the png
-	
+	if start_x + (scale * 4) >= png_obj.width ||
+		start_y + (scale * 6) >= png_obj.height then
+		puts "add_char_to_png: character exceeded bounds of image"
+		return false
+	end
 	
 	#assign default values for nil args
 	if color == nil then color = :black end
@@ -225,6 +239,8 @@ def add_char_to_png(png_obj, characters, character, start_x, start_y, color = ni
 			end
 		end
 	end
+	
+	return true
 end
 
 # adds multiple chars to a png. Returns true if the word was added, false otherwise.
@@ -263,6 +279,8 @@ def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color =
 		add_char_to_png(png_obj, characters, current_char, current_x, start_y, color, scale)
 		current_x += diff_btw_char_start_xs
 	end
+	
+	return true
 end
 
 
@@ -278,7 +296,7 @@ dire_wins = 0
 match_id_array = Array.new
 
 # parses the response's json String into a Hash
-json_hash = JSON.parse(getMatchHistory().body)
+json_hash = JSON.parse(getMatchHistory(api_key).body)
 
 # extracts all of the matchIDs from the hash and adds them to match_id_array
 json_hash["result"]["matches"].each do |match|
