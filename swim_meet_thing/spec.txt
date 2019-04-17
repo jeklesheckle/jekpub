@@ -1,0 +1,60 @@
+this will be the specification for the project containing information about the
+functions and data structures being used and how they interact.
+
+=================================================
+F U N C T I O N S
+=================================================
+## Team creation
+load_team():
+  returns the team specified by name from a json file. Teams are hashes
+
+create_team():
+  creates a team object with a name and an empty_swimmer
+
+save_team():
+  saves the team to a json file
+
+add_swimmer_to_team():
+  takes a team and a player, adds the player to the team
+
+remove_swimmer_from_team():
+  removes given swimmer from given team
+
+create_swimmer():
+  returns a new swimmer object with given params. Swimmers are objects with
+  names, ages, teams, and times for each event.
+
+## Tournament creation
+load_tournament():
+  returns the tournament specified by name from a json file. tournaments
+  are hashes containing:
+  -an array of events
+
+save_tournament():
+  saves a tournament to a json file
+
+add_event():
+  adds a given event to a given tournament
+
+remove_event():
+  removes given event from given tournament
+
+create_event():
+  creates a new Event that contains:
+  -distance
+  -event type (free / breast / etc)
+  -participants (array of teams)
+  -swimmers (hash from each team in teams to that team's participants)
+
+  If a boolean arg is_relay? is checked, then 'swimmers' will be a hash from
+  each team to an Array of swimmers rather than to an individual swimmer
+
+add_swimmer_to_event():
+  add a given swimmer to a given event (reads the swimmer's team). Fails
+  and returns an error message if the swimmer's team already has a swimmer
+  for that event.
+
+remove_swimmer_from_event():
+  given a swimmer, removes that swimmer from the event. there will be an
+  empty_swimmer for each team that can be added to events if that team's
+  swimmer is TBA
