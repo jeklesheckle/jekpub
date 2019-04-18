@@ -1,12 +1,11 @@
-# Contains the main code for the project
+# Contains the classes used to represent swimmers and tournaments
 
 =begin
 ==========
  T O D O
 ==========
--implement basic functions
--test them a bit
--add to this list
+-finish off the classes
+-create a new file and test em around a bit
 =end
 
 
@@ -15,6 +14,9 @@
 #==============
 
 # event_times is a Hash from Events
+# note that it's not currently necessary for a team
+#   to exist for a swimmer to be made on that team
+#   since the team's name as a string is all that's needed
 class Swimmer
   attr_reader :name, :age, :team_name, :event_times
   def initialize(name, age, team_name, event_times)
@@ -26,6 +28,7 @@ class Swimmer
   end
 end
 
+# represents a team
 class Team
   attr_reader :name
   attr_accessor :swimmers
@@ -35,6 +38,7 @@ class Team
   end
 end
 
+# represents a collection of races
 class Tournament
   attr_reader :name
   attr_accessor :races
@@ -44,6 +48,7 @@ class Tournament
   end
 end
 
+# represents a type of event (50 free, 100 back, etc)
 class Event
   attr_reader :distance, :event_type
   def initialize(distance, event_type)
@@ -52,6 +57,7 @@ class Event
   end
 end
 
+# represents a specific race with participants from each team
 class Race
   attr_reader :event, :teams
   attr_accessor :participants, :teams
@@ -69,18 +75,4 @@ class Race
   def event_distance()
     @event.distance
   end
-end
-
-
-#=================
-#F U N C T I O N S
-#=================
-
-def add_swimmer_to_team()
-
-end
-
-def create_team(name)
-  new_team = Hash.new {"name" => name, "swimmers" => []}
-
 end

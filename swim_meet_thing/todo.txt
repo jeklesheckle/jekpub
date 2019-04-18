@@ -1,0 +1,5 @@
+# explains project-scale things I plan to do
+
+* try to use an actual project structure like the one here
+  https://stackoverflow.com/questions/614309/ideal-ruby-project-structure
+* we have a whole lot to do but now is not the time to write it here
