@@ -16,11 +16,12 @@
 
 # event_times is a Hash from Events
 class Swimmer
-  attr_reader :name, :age, :team, :event_times
-  def initialize(name, age, team, event_times)
+  attr_reader :name, :age, :team_name, :event_times
+  def initialize(name, age, team_name, event_times)
     @name = name
     @age = age
-    @team = team
+    @team_name = team_name
+    # event_times is a Hash of Event -> time
     @event_times = event_times
   end
 end
@@ -30,16 +31,16 @@ class Team
   attr_accessor :swimmers
   def initialize(name)
     @name = name
-    @swimmers = [Swimmer.new("empty_swimmer", 0, self, [])]
+    @swimmers = []
   end
 end
 
 class Tournament
   attr_reader :name
-  attr_accessor :events
-  def initialize(name, events)
+  attr_accessor :races
+  def initialize(name, races)
     @name = name
-    @events = events
+    @races = races
   end
 end
 
@@ -67,7 +68,7 @@ class Race
 
   def event_distance()
     @event.distance
-  end 
+  end
 end
 
 
