@@ -6,6 +6,8 @@
 ==========
 -decide how you want to give new swimmers their times
   cuz it's 5AM and I shouldn't make that call now.
+  upon reflection during the commit, seems like the
+  struct you're using now is fine.
 -finish "testing"
 =end
 
