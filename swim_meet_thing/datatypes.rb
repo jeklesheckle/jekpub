@@ -4,10 +4,13 @@
 ==========
  T O D O
 ==========
--finish off the classes
--create a new file and test em around a bit
+-decide how you want to give new swimmers their times
+  cuz it's 5AM and I shouldn't make that call now.
+-finish "testing"
 =end
 
+
+Event_Times = Struct.new(:example_event, :example_event2)
 
 #==============
 #C L A S S E S
