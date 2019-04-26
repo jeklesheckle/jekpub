@@ -1,0 +1,13 @@
+for action in actions
+
+if action = selected_action then
+  run action's code
+end
+
+# thinking about making the actions point to procs
+
+#what if instead, you just had it point to an array of Fields objects
+# which are all read. Fields have a String prompt, a polymorphic response,
+
+# the UI will pull up this array of Fields and take the prompts to
+# put on the screen, responses will be submitted into each Field's response

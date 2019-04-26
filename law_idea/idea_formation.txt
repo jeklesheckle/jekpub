@@ -1,0 +1,55 @@
+Goal of this idea:
+Make the law transparent. ATM the law is so complicated that it is difficult to
+tell what it actually is.
+
+Basic idea:
+make a program that can take inputs of parties, actions, and circumstances, then
+return relevant laws.
+
+Mockup in mockup.png
+rough pseudocode in pseudo.txt
+
+Steps:
+-preliminary mockup in Rust (because i want to practice rust)
+-investigate other existing things that would make this useless on a larger scale
+-develop a solution that's useful and feasible
+
+Thoughts:
+---------
+Party: a person or other entity that is a party relevant to a law
+Action: the main "verb", generally things like steal, murder, possess
+Entity: a non-party that can be significant for an action, something like an
+        amount in dollars or an item (tree / house / car / etc)
+
+so choose an action, then fill in the fields. Actions can be pulled up by a
+name search.
+
+after an action's fields are filled, that action's list of laws related to the
+given parameters are pulled up
+
+data structures:
+-parties: types of parties are fixed, one can instantiate a party of a given
+  type with custom parameters. E.G. a Person is a type of party, one could make
+  a person with a custom name. The general list of party types will be hard
+  coded for the first iteration of the project. Party objects will simply be
+  stored in the heap as members of an Action
+-entities: similar to parties.
+-actions: similar to parties.
+
+I want to be able to pick an action, then have a UI pull up that type of action's
+fields for me to submit data into. The list of actions should come from a Hash
+stored in actions.rb. new Action("murder") should create a new MurderAction.
+
+More formalized thoughts:
+-------------------------
+Revised flow:
+1) choose an action
+2) given that action, generate more fields requesting user input on details
+3) bring up laws for that action relevant given the details
+
+some implementation details for this flow:
+1) user chooses an action from a dropdown menu of strings stored in a file
+2) based upon that string, a Hash of actions is accessed that returns a list of
+    AdditionalInformation fields of various types
+3) the user-chosen action's set of laws is iterated through and laws are either
+    printed or skipped based on the AdditionalInformation fields
