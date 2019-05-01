@@ -1,5 +1,0 @@
-Hello! I'm pretty sure this isn't the best place for this but I'm not sure where I should go to contact who I'm looking for. I'm making a little app for personal use to pull data from the WebApi and visualize it. I would like to send a burst of several hundred GET requests to the WebAPI several times per day (generally no more than 10). 
-
-Who should I be in contact with to inquire as to whether or not there is a way I can get permission to do this? I am currently having to limit my program to one request per second.
-
-To be specific, I'm using the IDOTA2Match_570 interface and the GetMatchHistory call to gather matchIDs. I then call GetMatchDetails on each of the ~100 returned IDs at one call per second. I need to make these 100 extra calls because the API only returns the winner of a match under that call. If GetMatchHistory also included an extra boolean value indicating the winning team (like radiant_win from GetMatchDetails), I would make only 1 call per 100 matches and would be able to retreive my data in less than a second rather than several minutes.

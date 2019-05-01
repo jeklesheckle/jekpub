@@ -18,7 +18,7 @@ Current status: fully functional for 100 matches.
 
 To Test:
 * if exception is properly thrown when no internet is connected
-* the perimeters of the image are properly defined for all functions 
+* the perimeters of the image are properly defined for all functions
 
 Goals:
 * have number on top of bars be centered by math
@@ -37,9 +37,6 @@ require 'chunky_png'
 
 # acceptable http statuses
 ACCEPTABLE_HTTP_STATUSES = [200]
-
-# gets the api key from a file, you can change the name / location of the file here
-api_key = File.open("api_key.txt").read
 
 # dimensions of resulting image. Keep in mind that
 # making these too small will prevent certain
