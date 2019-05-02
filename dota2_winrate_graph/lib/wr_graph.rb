@@ -21,6 +21,7 @@ To Test:
 * the perimeters of the image are properly defined for all functions
 
 Goals:
+* upgrade to work with 1000 matches instead of 100
 * have number on top of bars be centered by math
 * improve commenting
 * improve README
@@ -376,20 +377,33 @@ radiant_wins = 0
 dire_wins = 0
 number_matches = 0
 
-# to store matchIDs
-match_id_array = Array.new
+# stores matchIDs (needed to prevent counting duplicates)
+parsed_matches = []
 
 # parses the response's json String into a Hash
 json_hash = JSON.parse(getMatchHistory().body)
 
+while number_matches < 1000 do
 
-json_hash.each do |match|
-	if match["radiant_win"] then
-		radiant_wins += 1
-	else
-		dire_wins	+= 1
+	# parses the response's json String into a Hash
+	json_hash = JSON.parse(getMatchHistory().body)
+
+	json_hash.each do |match|
+		match_id = match["match_id"]
+		if !parsed_matches.include?(match_id) then
+			parsed_matches << match_id
+
+			if match["radiant_win"] then
+				radiant_wins += 1
+			else
+				dire_wins	+= 1
+			end
+			number_matches += 1
+
+		else
+			puts("found duplicate match (id:#{})", match_id)
+		end
 	end
-	number_matches += 1
 end
 
 puts "radiant: #{radiant_wins}\tdire:#{dire_wins}\ttotal: #{number_matches}"
