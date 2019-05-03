@@ -21,7 +21,6 @@ To Test:
 * the perimeters of the image are properly defined for all functions
 
 Goals:
-* upgrade to work with 1000 matches instead of 100
 * have number on top of bars be centered by math
 * improve commenting
 * improve README
@@ -198,9 +197,13 @@ ALL_CHARACTERS = {
 #=============================
 
 #returns an HTTParty Response obj that match winners will be extracted from
-def getMatchHistory()
+def getMatchHistory(max_match_id = nil)
 	begin
-  	response = HTTParty.get("https://api.opendota.com/api/publicMatches")
+		if max_match_id then
+			response = HTTParty.get("https://api.opendota.com/api/publicMatches?less_than_match_id=#{max_match_id}")
+		else
+			response = HTTParty.get("https://api.opendota.com/api/publicMatches")
+		end
 
   	# checks to make sure we got a good response before parsing
   	until ACCEPTABLE_HTTP_STATUSES.include? response.code
@@ -377,20 +380,27 @@ radiant_wins = 0
 dire_wins = 0
 number_matches = 0
 
+min_match_id = 9999999999
+
 # stores matchIDs (needed to prevent counting duplicates)
 parsed_matches = []
 
-# parses the response's json String into a Hash
-json_hash = JSON.parse(getMatchHistory().body)
 
 while number_matches < 1000 do
 
 	# parses the response's json String into a Hash
-	json_hash = JSON.parse(getMatchHistory().body)
+	if min_match_id == 9999999999 then
+		json_hash = JSON.parse(getMatchHistory().body)
+	else
+		json_hash = JSON.parse(getMatchHistory(min_match_id).body)
+	end
 
 	json_hash.each do |match|
 		match_id = match["match_id"]
 		if !parsed_matches.include?(match_id) then
+			if match_id < min_match_id then
+				min_match_id = match_id
+			end
 			parsed_matches << match_id
 
 			if match["radiant_win"] then
@@ -402,12 +412,15 @@ while number_matches < 1000 do
 
 		else
 			puts("found duplicate match (id:#{})", match_id)
+			sleep(1)
 		end
 	end
 end
 
 puts "radiant: #{radiant_wins}\tdire:#{dire_wins}\ttotal: #{number_matches}"
 
+radiant_wins /= 10
+dire_wins /= 10
 
 ### Generating the image
 
