@@ -20,8 +20,7 @@ To Test:
 * if exception is properly thrown when no internet is connected
 * the perimeters of the image are properly defined for all functions
 
-Goals:
-* have number on top of bars be centered by math
+Goals:	
 * improve commenting
 * improve README
 * more input checking (negative coords, etc)
@@ -58,6 +57,7 @@ RADIANT_BAR_X = 53
 BAR_THICKNESS = 50
 CHARACTER_WIDTH_PX = 4
 CHARACTER_HEIGHT_PX = 6
+TEXT_GAP = 3
 
 # dire
 DIRE_BAR_COLOR = :red
@@ -342,16 +342,8 @@ def add_word_to_png(png_obj, characters, chars_to_add, start_x, start_y, color =
 		return false
 	end
 
-	# generate an int to keep track of the space between chars
-	gap = 0
-	if scale > 4 then
-		gap = 4
-	else
-		gap = scale
-	end
-
 	# generates the difference between the start columns of two chars
-	diff_btw_char_start_xs = width_of_char + gap
+	diff_btw_char_start_xs = width_of_char + TEXT_GAP
 
 	current_x = start_x
 
@@ -385,8 +377,15 @@ min_match_id = 9999999999
 # stores matchIDs (needed to prevent counting duplicates)
 parsed_matches = []
 
+# this is to track api calls so we don't exceed their limits
+api_calls = 0
 
 while number_matches < 1000 do
+	api_calls += 1
+
+	if api_calls > 59 then
+		raise "made too many calls to api, stopped to not break ToS."
+	end
 
 	# parses the response's json String into a Hash
 	if min_match_id == 9999999999 then
@@ -419,8 +418,13 @@ end
 
 puts "radiant: #{radiant_wins}\tdire:#{dire_wins}\ttotal: #{number_matches}"
 
-radiant_wins /= 10
-dire_wins /= 10
+if radiant_wins % 100 > 49 then
+	radiant_wins = radiant_wins / 10 + 1
+	dire_wins /= 10
+else
+	radiant_wins /= 10
+	dire_wins = dire_wins / 10 + 1
+end
 
 ### Generating the image
 
@@ -455,8 +459,13 @@ add_rectangle(png, RADIANT_BAR_X, X_AXIS_Y - rad_bar_ht, BAR_THICKNESS, rad_bar_
 add_rectangle(png, DIRE_BAR_X, X_AXIS_Y - dire_bar_ht, BAR_THICKNESS, dire_bar_ht, DIRE_BAR_COLOR)
 
 # add the percentages above the bars
-add_word_to_png(png, ALL_CHARACTERS, radiant_score, RADIANT_BAR_X + 10, X_AXIS_Y - rad_bar_ht - 30, TEXT_COLOR, TEXT_SCALE)
-add_word_to_png(png, ALL_CHARACTERS, dire_score, DIRE_BAR_X + 10, X_AXIS_Y - dire_bar_ht - 30, TEXT_COLOR, TEXT_SCALE)
+
+# find location to start the radiant and dire bar labels
+rad_bar_label_x = (RADIANT_BAR_X + (BAR_THICKNESS / 2)) - (((radiant_score.length * ((CHARACTER_WIDTH_PX  * TEXT_SCALE) + TEXT_GAP)) - radiant_score.length) / 2)
+dire_bar_label_x = (DIRE_BAR_X + (BAR_THICKNESS / 2)) - (((dire_score.length * ((CHARACTER_WIDTH_PX  * TEXT_SCALE) + TEXT_GAP)) - dire_score.length) / 2)
+
+add_word_to_png(png, ALL_CHARACTERS, radiant_score, rad_bar_label_x, X_AXIS_Y - rad_bar_ht - 30, TEXT_COLOR, TEXT_SCALE)
+add_word_to_png(png, ALL_CHARACTERS, dire_score, dire_bar_label_x, X_AXIS_Y - dire_bar_ht - 30, TEXT_COLOR, TEXT_SCALE)
 
 # save the file
 png.save(IMG_NAME, :interlace => true)
