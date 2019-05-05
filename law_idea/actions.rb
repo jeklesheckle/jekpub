@@ -1,11 +1,12 @@
 # this file contains class outlines for actions and Fields
 # actions are not objects, they are simply arrays of Fields accessed by name
+# thinking about changing that fact ^^^^
 
 # TODO:
 # * add more example actions
-# * perhaps enhance the
+# * add a checker to Action.init that ensure the fields are valid
 
-private class Field
+class Field
   attr_reader :prompt, :type, :response
   def initialize(prompt, type)
     @prompt = prompt
@@ -31,23 +32,23 @@ private class Field
         raise ArgumentError.new("cannot set response for a boolean field to a non-boolean value (value: #{})", new_response)
       end
     when "int"
+      @response = new_response.to_i
+    end
   end
 end
 
 
-ALL_ACTIONS = {
-  "murder" => [
-    Field.new("perpetrator", "string"),
-    Field.new("mentally aware", "bool")
-  ]
-}
-
-def create_action(action_name)
-  new_action = ALL_ACTIONS[action_name]
-
-  if new_action == nil then
-    raise ArgumentError.new "invalid action name, cannot create action."
+#this class is just a wrapper for an array of fields
+class Action
+  def initialize
+    @fields = []
   end
 
-  new_action
+  def fields
+    @fields
+  end
+
+  def <<(field)
+    @fields << field
+  end
 end

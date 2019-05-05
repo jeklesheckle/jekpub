@@ -1,19 +1,25 @@
-# this function runs the program in the command line
+# this file runs the program in the command line
 
 require_relative 'actions.rb'
 
+
+actions = Hash.new
+
 # user_input = STDIN.gets.chomp
 
-puts "Please enter an action:"
+puts "Creating an action, enter its name:"
 
 action_entered = STDIN.gets.chomp()
 
-action = create_action(action_entered)
+actions[action_entered] = Action.new
 
-for field in action do
-  print field.prompt
-  field.response = STDIN.gets.chomp()
+prompt_entered = "default"
+while prompt_entered !=  "exit" do
+    puts "enter a field prompt:"
+    prompt_entered =  STDIN.gets.chomp()
+    puts "enter the field's type:"
+    type_entered = STDIN.gets.chomp()
+
+    actions[action_entered] << Field.new(prompt_entered, type_entered)
+    puts actions[action_entered].fields.inspect
 end
-
-puts action.inspect()
-#my_action[0] now represents the perp field
