@@ -20,7 +20,8 @@ To Test:
 * if exception is properly thrown when no internet is connected
 * the perimeters of the image are properly defined for all functions
 
-Goals:	
+Goals:
+* might be able to make an executable with rb2exe or ocra in win10
 * improve commenting
 * improve README
 * more input checking (negative coords, etc)
