@@ -24,6 +24,7 @@ processor: [Hash] Processor traits:
       "cores" -> [Int] Number of cores
       "threads" -> [Int] Number of threads
       "hyperthreading?" -> [Bool] Whether an Intel processor has hyperthreading
+      "graphics" -> [String] Onboard graphics
       "TDP" -> [Int] Power draw in Watts
       "lithography" -> [String] Lithography (die size in nanometers)
 storage: [Hash] Storage traits:
@@ -39,11 +40,29 @@ memory: [Hash] Memory traits:
 screen: [Hash] Screen traits (if present, else entire object is nil):
       "size" -> [Float] The diagonal size of the screen
       "resolution" -> [Array len 2 of Ints] The w and l of the resolution
+      "touch?" -> [Bool] If the screen supports touch
+battery: [Hash] Battery traits:
+      "life_estimate" -> [Float] Battery life in hours
+      "mAH" -> [Int] Battery life in mAH
+keyboard: [Hash] Keyboard traits
+      "backlit?" -> [Bool] If keyboard is backlit
+      "numpad?" -> [Bool] If keyboard has numpad
+display_ports: [Array] Each element is the String name of a display port.
+  duplicates are listed multiple times.
+other_ports: [Array] Each element is the String name of a port, duplicates are
+  listed multiple times.
+upgrade_specs: [Hash] Traits relating to upgradability
+      "max_ram" -> [Int] The maximum amount of RAM the machine supports
+      "hard_drive_easy?" -> [Bool] True if the technician believes a normal
+        person would be able to easily find and swap the hard drive.
+      "processor_soldered?" -> [Bool] If the processor is soldered to the mobo
+Peripherals: [Array] Strings describing peripherals included in the box
+  (also includes speakers built into the device)
 
 also want to add: upgrades, ports, peripherals....
 =end
 class Computer
   # each of these member vars can be an object/struct with several members
   # e.g. processor has base_clock, boost_clock, cores, etc.
-  attr_accessor :os, :processor, :ram, :keyboard, :peripherals, :ports
+  attr_accessor :os, :processor
 end
