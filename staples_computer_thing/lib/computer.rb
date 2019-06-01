@@ -36,6 +36,11 @@ memory: [Hash] Memory traits:
       "type" -> [String] Type of memory (SODIMM, DIMM, etc.)
       "slots_used" -> [Int] Number of memory slots used
       "slots_available" -> [Int] Number of memory slots available
+screen: [Hash] Screen traits (if present, else entire object is nil):
+      "size" -> [Float] The diagonal size of the screen
+      "resolution" -> [Array len 2 of Ints] The w and l of the resolution
+
+also want to add: upgrades, ports, peripherals....
 =end
 class Computer
   # each of these member vars can be an object/struct with several members
