@@ -1,0 +1,8 @@
+Here be horrible wastes of time x    d
+
+* program that takes a file name and a string, outputs a file by
+  that name containing the string but with an extra space after every
+  character (except the last one of course xd)
+
+* program that takes a word and copies the first google image search
+  result for that word to a file by a given name

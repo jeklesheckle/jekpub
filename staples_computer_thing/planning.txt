@@ -10,3 +10,6 @@ Getting traits:
      then the remaining information from any secondary sources
   4) stores the information inside a file as a line
 -also have an option to manually create a listing
+
+Currently working on:
+Computer object design --> file management
