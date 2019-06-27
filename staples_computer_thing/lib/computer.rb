@@ -60,8 +60,8 @@ end
 # creates a new empty computer
 # takes a hash of computer traits that contains a mapping from strings
 # describing the detail to the value of that detail.
-def create_computer(details_hash)
-  return Computer.new(details_hash["os"], details_hash["processor"], details_hash["storage"],
+def create_computer(name, details_hash)
+  return Computer.new(name, details_hash["os"], details_hash["processor"], details_hash["storage"],
     details_hash["memory"], details_hash["screen"], details_hash["battery"],
     details_hash["keyboard"], details_hash["display_ports"], details_hash["other_ports"],
     details_hash["upgrade_specs"], details_hash["peripherals"])

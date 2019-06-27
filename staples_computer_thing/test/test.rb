@@ -10,8 +10,9 @@ require '../lib/computer.rb'
 ##############################################################
 #####         S A M P L E  C O M P U T E R          ##########
 ##############################################################
+
 details_hash = Hash.new
-details_hash["os"] =
+details_hash["os"] = "ubuntu"
 
 # may want a check to see if string is valid
 # will need to confirm that nils are generated rather than ""
@@ -69,12 +70,14 @@ details_hash["upgrade"] = upgrade_hash
 
 details_hash["peripherals"] = []
 
-sample_computer = create_computer(details_hash)
+sample_computer = create_computer("jektop15", details_hash)
 
 ########################### ACTUALLY DOING THINGS WITH SAMPLE
+puts "BEFORE: " + sample_computer.inspect
+
 store_computer(sample_computer)
 comp_obj = load_computer(sample_computer)
 
-puts comp_obj.inspect
+puts "AFTER: " + comp_obj.inspect
 
 #### current bug is just that store / the hash isn't set up right, ezpc fix
