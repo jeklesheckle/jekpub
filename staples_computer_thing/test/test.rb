@@ -1,5 +1,5 @@
 # this file is for live testing, may have other files for unit testing later
-
+require 'pp'
 require '../lib/computer.rb'
 
 
@@ -73,11 +73,9 @@ details_hash["peripherals"] = []
 sample_computer = create_computer("jektop15", details_hash)
 
 ########################### ACTUALLY DOING THINGS WITH SAMPLE
-puts "BEFORE: " + sample_computer.inspect
-
 store_computer(sample_computer)
 comp_obj = load_computer(sample_computer)
 
-puts "AFTER: " + comp_obj.inspect
+puts "AFTER: " + comp_obj.pretty_inspect
 
 #### current bug is just that store / the hash isn't set up right, ezpc fix
