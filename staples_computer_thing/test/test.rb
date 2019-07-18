@@ -74,8 +74,7 @@ sample_computer = create_computer("jektop15", details_hash)
 
 ########################### ACTUALLY DOING THINGS WITH SAMPLE
 store_computer(sample_computer)
-comp_obj = load_computer(sample_computer)
+comp_obj = load_computer(sample_computer.name)
 
-puts "AFTER: " + comp_obj.pretty_inspect
-
-#### current bug is just that store / the hash isn't set up right, ezpc fix
+# puts comp_obj.pretty_inspect
+enter_in_computer()

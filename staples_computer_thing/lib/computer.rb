@@ -16,6 +16,10 @@ def to_bool(string)
   end
 end
 
+# takes an Object. If the object is not an array or Hash it is returned as
+# an array containing only that object. The the object was an Array or Hash,
+# the function calls itself on each of the elements of that structure
+
 
 ######################################################################
 # A C T U A L  C O M P U T E R  S T U F F
@@ -51,7 +55,15 @@ end
 
 # returns the computer object named in the args from file storage
 def load_computer(name)
-  return Marshal.restore(File.open("computers.cstore", "r+"))
+  computers_arr = Marshal.restore(File.open("computers.cstore", "r+"))
+
+  for computer in computers_arr do
+    if computer.name == name then
+      return computer
+    end
+  end
+  # TODO: idk about this syntax but i cant get online to check for sumfin better
+  raise(ArgumentError.new "no computer with name #{name} was found")
 end
 
 
@@ -65,6 +77,36 @@ def create_computer(name, details_hash)
     details_hash["memory"], details_hash["screen"], details_hash["battery"],
     details_hash["keyboard"], details_hash["display_ports"], details_hash["other_ports"],
     details_hash["upgrade_specs"], details_hash["peripherals"])
+end
+
+# allows a user to create a new computer object in the command line
+# the user can choose whether or not to store it afterwords
+def enter_in_computer()
+  # move through all of the attributes of a computer
+  # for each attribute, prompt the user with the name and get a value
+  # enter that value in the proper format into a hash (lke details_hash
+  # from create_computer)
+  # if an attribute is complex (like a hash or an array), have it be
+  # processed individually element by element.
+
+  # psuedo
+=begin
+  get the name first
+  details_hash = Hash.new
+  some kind of structure recursive iteration through the attrs of Computer
+  each step puts the name of the field and save its value to details_hash[attrname]
+
+  at the end print the pretty_inspect and ask if they'd like to save
+=end
+  puts "Enter the model / name of the computer: "
+  computer_name = gets.chomp
+
+  new_computer = Computer.new(computer_name)
+
+  for inst_var in new_computer.instance_variables do
+    # call a function that takes an Object and spits out
+    # an array containing each of the sub-objects of that object
+  end
 end
 
 =begin
