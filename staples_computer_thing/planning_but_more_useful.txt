@@ -1,0 +1,35 @@
+computer.rb defines computer class and methods that manipulate computers
+
+currently: making a method to create computers from the command line.
+
+next real step: 
+ = create methods for retrieving computers by trait
+	--> methods take an array of computers + [float + comparator] / string / etc + a symbol and find the computers that fit the filter those inputs create
+	    e.g. float_lookup(2.0, "greater", :threads) ==> [computer_with_more_than_two_threads, computer_that_has_four_threads]
+
+ = then create a gui that binds user actions (button-presses, etc.) to calls to these methods. if a user wants to have multiple filters you can apply them in series
+	--> when "submit" button is pressed, a collection of the values of the inputs is passed to a parser, that parser reads the inputs and calls functions
+	    based on those inputs, continuously feeding the input of each function into the next. Once the parser runs out of input, it spits out the remaining
+	    array of computers. that array is then usable by an output function which will display the machines that fit the specs.
+
+
+
+OVERALL LOOK OF THANGS: 
+
+start program
+load computers from file into RAM as an array
+have a UI that allows user to enter parameters to search for each "thing" in computer.rb
+
+like: 
+
+___________________________
+processor		  |
+base:______    >  =  <	  |
+boost:______   >  =  <	  | <------ float lookup
+cores:_______		  |
+threads:_______		  |
+			  |
+storage:		  |
+type:______               |  <--- string lookup
+...........................
+
