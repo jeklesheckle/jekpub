@@ -16,10 +16,6 @@ def to_bool(string)
   end
 end
 
-# takes an Object. If the object is not an array or Hash it is returned as
-# an array containing only that object. The the object was an Array or Hash,
-# the function calls itself on each of the elements of that structure
-
 
 ######################################################################
 # A C T U A L  C O M P U T E R  S T U F F
@@ -79,35 +75,6 @@ def create_computer(name, details_hash)
     details_hash["upgrade_specs"], details_hash["peripherals"])
 end
 
-# allows a user to create a new computer object in the command line
-# the user can choose whether or not to store it afterwords
-def enter_in_computer()
-  # move through all of the attributes of a computer
-  # for each attribute, prompt the user with the name and get a value
-  # enter that value in the proper format into a hash (lke details_hash
-  # from create_computer)
-  # if an attribute is complex (like a hash or an array), have it be
-  # processed individually element by element.
-
-  # psuedo
-=begin
-  get the name first
-  details_hash = Hash.new
-  some kind of structure recursive iteration through the attrs of Computer
-  each step puts the name of the field and save its value to details_hash[attrname]
-
-  at the end print the pretty_inspect and ask if they'd like to save
-=end
-  puts "Enter the model / name of the computer: "
-  computer_name = gets.chomp
-
-  new_computer = Computer.new(computer_name)
-
-  for inst_var in new_computer.instance_variables do
-    # call a function that takes an Object and spits out
-    # an array containing each of the sub-objects of that object
-  end
-end
 
 =begin
 Represents a computer, centered around a hash of all of the traits
@@ -179,5 +146,35 @@ class Computer
       @other_ports = other_ports
       @upgrade_specs = upgrade_specs
       @peripherals = peripherals
+  end
+
+  def enter_os
+    puts "enter the name of the operating system"
+    @os = gets.chomp
+  end
+
+## i want this to be more robust. make these "trait" objects so i
+## don't have to type them all out (this looks shitty)
+## something like enter_obj(%type%, %key%)
+  def enter_processor
+    raise "hey fucker you forgot to finish this"
+    processor_hash = Hash.new
+
+    puts "enter the processor model"
+    processor_hash["model"] = gets.chomp.as_s
+
+    puts "enter the processor base clock speed"
+    processor_hash["base_clock"] = gets.chomp.as_f
+
+    puts "enter the boost clock speed "
+    processor_hash["boost_clock"] = gets.chomp.as_f
+
+    processor_hash["cores"] =
+    processor_hash["threads"] =
+    processor_hash["hyperthreading?"] =
+    processor_hash["graphics"] =
+    processor_hash["TDP"] =
+    processor_hash["lithography"] = 6
+    @processor = processor_hash
   end
 end
