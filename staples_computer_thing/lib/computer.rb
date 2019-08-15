@@ -124,6 +124,15 @@ peripherals: [Array] Strings describing peripherals included in the box
   (also includes speakers built into the device)
 =end
 class Computer
+  PROCESSOR_ASPECTS = ["model", "base clock", "boost clock", "cores", "threads",
+  "multithreading", "graphics", "TDP", "lithography"]
+  STORAGE_ASPECTS = ["size", "type", "rpm"]
+  MEMORY_ASPECTS = ["size", "speed", "type", "slots used", "slots available"]
+  SCREEN_ASPECTS = ["size", "resolution", "touch?"]
+  BATTERY_ASPECTS = ["estimated life", "mAH"]
+  KEYBOARD_ASPECTS = ["backlit?", "numpad?"]
+  UPGRADE_ASPECTS = ["max ram", "processor soldered?"]
+
   # each of these member vars can be an object/struct with several members
   # e.g. processor has base_clock, boost_clock, cores, etc.
   (attr_accessor :os, :processor, :storage, :memory, :screen, :battery, :keyboard,
@@ -148,33 +157,108 @@ class Computer
       @peripherals = peripherals
   end
 
-  def enter_os
-    puts "enter the name of the operating system"
-    @os = gets.chomp
+
+  # takes an introductory string containing the part of the computer
+  # and then detail = which aspect of that part is to be entered.
+  # then simply prompts the user to enter a value for that aspect
+  # and returns it.
+  def get_entry(intro, detail)
+    puts intro + " " + detail + ": "
+    return gets.chomp
   end
 
-## i want this to be more robust. make these "trait" objects so i
-## don't have to type them all out (this looks shitty)
-## something like enter_obj(%type%, %key%)
+  # gets all entries given a hash, an array of aspects (keys), and
+  # an introductory prompt string. Returns a hash.
+  def get_entries(hash, aspect_arr, intro)
+    for aspect in aspect_arr do
+      hash[aspect] = get_entry(intro, aspect)
+    end
+
+    return hash
+  end
+
+  # allows the user to enter strings until they enter the string "done".
+  # once done is entered, returns an array of entered strings
+  def get_array(intro)
+    puts intro + ", enter \"done\" to finish. "
+    arr = []
+    while true do
+      puts arr.inspect + " + "
+      value = gets.chomp
+      if value == "done" then
+        return arr
+      else
+        arr << value
+      end
+    end
+  end
+
+  def enter_all_specs
+    enter_os
+    enter_processor
+    enter_storage
+    enter_memory
+    enter_screen
+    enter_battery
+    enter_keyboard
+    enter_display_ports
+    enter_other_ports
+    enter_upgrades
+    enter_peripherals
+  end
+
+  # gets the os from the command line
+  def enter_os
+    @os = get_entry("enter operating system", "")
+  end
+
+  # gets the processor specs from command line
   def enter_processor
-    raise "hey fucker you forgot to finish this"
-    processor_hash = Hash.new
+    @processor = get_entries(Hash.new, PROCESSOR_ASPECTS, "enter processor")
+  end
 
-    puts "enter the processor model"
-    processor_hash["model"] = gets.chomp.as_s
+  #gets the storage details from the command line
+  def enter_storage
+    @storage = get_entries(Hash.new, STORAGE_ASPECTS, "enter storage")
+  end
 
-    puts "enter the processor base clock speed"
-    processor_hash["base_clock"] = gets.chomp.as_f
+  # gets the memory details from the command line
+  def enter_memory
+    @memory = get_entries(Hash.new, MEMORY_ASPECTS, "enter memory")
+  end
 
-    puts "enter the boost clock speed "
-    processor_hash["boost_clock"] = gets.chomp.as_f
+  # gets the screen details from the command line
+  def enter_screen
+    @screen = get_entries(Hash.new, SCREEN_ASPECTS, "enter screen")
+  end
 
-    processor_hash["cores"] =
-    processor_hash["threads"] =
-    processor_hash["hyperthreading?"] =
-    processor_hash["graphics"] =
-    processor_hash["TDP"] =
-    processor_hash["lithography"] = 6
-    @processor = processor_hash
+  # gets the battery details from the command line
+  def enter_battery
+    @battery = get_entries(Hash.new, BATTERY_ASPECTS, "enter battery")
+  end
+
+  # gets the keyboard details from the command line
+  def enter_keyboard
+    @keyboard = get_entries(Hash.new, KEYBOARD_ASPECTS, "enter keyboard")
+  end
+
+  # gets the display ports from the command line
+  def enter_display_ports
+    @display_ports = get_array("enter display ports")
+  end
+
+  # gets the other ports from the command line
+  def enter_other_ports
+    @other_ports = get_array("enter all other ports")
+  end
+
+  # gets upgrade details from the command line
+  def enter_upgrades
+    @upgrade_specs = get_entries(Hash.new, UPGRADE_ASPECTS, "enter upgrade")
+  end
+
+  # gets the included peripherals from the command line
+  def enter_peripherals
+    @peripherals = get_array("enter all peripherals")
   end
 end

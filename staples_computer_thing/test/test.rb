@@ -77,6 +77,6 @@ store_computer(sample_computer)
 comp_obj = load_computer(sample_computer.name)
 
 # puts comp_obj.pretty_inspect
-comp_obj.enter_os
+comp_obj.enter_all_specs
 
 puts comp_obj.pretty_inspect
