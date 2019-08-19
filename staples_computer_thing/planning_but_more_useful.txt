@@ -1,11 +1,12 @@
 computer.rb defines computer class and methods that manipulate computers
 
-currently: making a method to create computers from the command line.
-ISSUE: the elements of processor / os /etc are not defined within the class
-FIX: make the method for entering a computer be within the object
+WHITEBOARDED: going to have at least two "find" methods, one that finds
+all computers < > or == to a certain criteria, one that finds all computers
+that are the max or min of a certain aspect (only for numerical types)
+>>NOTE will have to implement typing here.
 
 
-next real step:
+current step:
  = create methods for retrieving computers by trait
 	--> methods take an array of computers + [float + comparator] / string / etc + a symbol and find the computers that fit the filter those inputs create
 	    e.g. float_lookup(2.0, "greater", :threads) ==> [computer_with_more_than_two_threads, computer_that_has_four_threads]

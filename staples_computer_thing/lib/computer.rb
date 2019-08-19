@@ -63,8 +63,6 @@ def load_computer(name)
 end
 
 
-# prints the computer's contents to console
-
 # creates a new empty computer
 # takes a hash of computer traits that contains a mapping from strings
 # describing the detail to the value of that detail.
@@ -74,6 +72,13 @@ def create_computer(name, details_hash)
     details_hash["keyboard"], details_hash["display_ports"], details_hash["other_ports"],
     details_hash["upgrade_specs"], details_hash["peripherals"])
 end
+
+
+# finds all computers in a given array of computers that fit a certain criteria.
+#
+# def find_all_computers_that(key1, key2, >/</==, value)
+ #### maybe have a get_aspect function that takes those keys?
+
 
 
 =begin
@@ -157,6 +162,41 @@ class Computer
       @peripherals = peripherals
   end
 
+  # used to retreive details about the computer
+  # method is here to increase ease of use for later developed
+  # code to retreive these details
+  def get_aspect(key1, key2 = nil)
+    case key1
+    when "os"
+      value1 = os
+    when "processor"
+      value1 = processor
+    when "storage"
+      value1 = storage
+    when "memory"
+      value1 = memory
+    when "screen"
+      value1 = screen
+    when "battery"
+      value1 = battery
+    when "keyboard"
+      value1 = keyboard
+    when "display_ports"
+      value1 = display_ports
+    when "other_ports"
+      value1 = other_ports
+    when "upgrade_specs"
+      value1 = upgrade_specs
+    when "peripherals"
+      value1 = peripherals
+    end ## add default case that throws error
+
+    if key2 == nil then
+      return value1
+    else
+      return value1[key2]
+    end
+  end
 
   # takes an introductory string containing the part of the computer
   # and then detail = which aspect of that part is to be entered.
