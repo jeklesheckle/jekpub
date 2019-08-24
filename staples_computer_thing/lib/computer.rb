@@ -267,7 +267,18 @@ class Computer
   # and returns it.
   def get_entry(intro, detail)
     puts intro + " " + detail + ": "
-    return gets.chomp
+    entry = gets.chomp
+
+    puts "hit enter again to proceed, type anything to re-enter. "
+    user_response = gets.chomp
+
+    # theoretically allows for an exploit if user just keeps
+    # doing this and opening stack frames
+    if user_response != "" then
+      return get_entry(intro, detail)
+    else
+      return entry
+    end
   end
 
   # gets all entries given a hash, an array of aspects (keys), and
