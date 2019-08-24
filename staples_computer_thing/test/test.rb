@@ -10,7 +10,7 @@ require '../lib/computer.rb'
 ##############################################################
 #####         S A M P L E  C O M P U T E R          ##########
 ##############################################################
-
+=begin
 details_hash = Hash.new
 details_hash["os"] = "ubuntu"
 
@@ -71,14 +71,27 @@ details_hash["upgrade"] = upgrade_hash
 details_hash["peripherals"] = []
 
 sample_computer = create_computer("jektop15", details_hash)
+=end
 
-########################### ACTUALLY DOING THINGS WITH SAMPLE
-store_computer(sample_computer)
-comp_obj = load_computer(sample_computer.name)
+array_of_computers = []
 
-# puts comp_obj.pretty_inspect
-puts comp_obj.get_aspect("os")
+creating_computers = "yes"
 
-puts find_superlative("min", "processor", "base clock", [comp_obj]).inspect
+while creating_computers != "no" do
+  puts "enter the name of this computer: "
+  array_of_computers << create_computer_from_cmd(gets.chomp)
 
-#puts comp_obj.pretty_inspect
+  puts "enter \"no\" to stop creating computers: "
+  creating_computers = gets.chomp
+end
+
+puts "save all computers created? (y/n)"
+if gets.chomp == "y" then
+  for comp in array_of_computers do
+    store_computer(comp)
+    puts "computer #{comp.name} saved."
+  end
+  puts "all computers saved."
+else
+  puts "computers not saved."
+end

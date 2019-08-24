@@ -21,6 +21,7 @@ end
 # A C T U A L  C O M P U T E R  S T U F F
 ######################################################################
 # takes a computer and stores it into the database as a line of characters
+# if a computer by that name already exists, it is replaced
 def store_computer(computer_to_store)
   # check to make sure file exists
   if File.exists?("computers.cstore") then
@@ -49,6 +50,26 @@ def store_computer(computer_to_store)
 end
 
 
+# deletes the file containing the information for all computers
+def delete_all_computers(password)
+  #this password is intended to provide basic security, NOT a
+  # useful solution against a deliberate attack
+  # someone can just delete the file manually if they want to
+
+  if password == "yes, actually delete all computers" then
+    puts "Are you sure you want to DELETE all computers? (y/n)"
+    choice = gets.chomp
+    if choice == "y" then
+      File.delete("computers.cstore")
+    else
+      puts "you did not select \"y\" =, no computers deleted."
+    end
+
+  else
+    puts "incorrect password, no computers deleted."
+  end
+end
+
 # returns the computer object named in the args from file storage
 def load_computer(name)
   computers_arr = Marshal.restore(File.open("computers.cstore", "r+"))
@@ -66,11 +87,22 @@ end
 # creates a new empty computer
 # takes a hash of computer traits that contains a mapping from strings
 # describing the detail to the value of that detail.
-def create_computer(name, details_hash)
+# OUTDATED
+def create_computer_from_hash(name, details_hash)
   return Computer.new(name, details_hash["os"], details_hash["processor"], details_hash["storage"],
     details_hash["memory"], details_hash["screen"], details_hash["battery"],
     details_hash["keyboard"], details_hash["display_ports"], details_hash["other_ports"],
     details_hash["upgrade_specs"], details_hash["peripherals"])
+end
+
+
+# returns a computer created in the command line
+def create_computer_from_cmd(name)
+  new_comp = Computer.new(name)
+
+  new_comp.enter_all_specs
+
+  return new_comp
 end
 
 # finds the Computer(s) with the highest value for a particular numerical
