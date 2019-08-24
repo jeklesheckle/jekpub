@@ -18,8 +18,8 @@ details_hash["os"] = "ubuntu"
 # will need to confirm that nils are generated rather than ""
 processor_hash = Hash.new
 processor_hash["name"] = "jektel i69"
-processor_hash["base_clock"] = 5.0
-processor_hash["boost_clock"] = 6.9
+processor_hash["base clock"] = 5.0
+processor_hash["boost clock"] = 6.9
 processor_hash["cores"] = 4
 processor_hash["threads"] = 8
 processor_hash["hyperthreading?"] = true
@@ -38,8 +38,8 @@ memory_hash = Hash.new
 memory_hash["size"] = 16
 memory_hash["speed"] = 2400
 memory_hash["type"] = "DDR4"
-memory_hash["slots_used"] = 2
-memory_hash["slots_available"] = 4
+memory_hash["slots used"] = 2
+memory_hash["slots available"] = 4
 details_hash["memory"] = memory_hash
 
 screen_hash = Hash.new
@@ -49,7 +49,7 @@ screen_hash["touch?"] = false
 details_hash["screen"] = screen_hash
 
 battery_hash = Hash.new
-battery_hash["life_estimate"] = 10
+battery_hash["life estimate"] = 10
 battery_hash["mAH"] = 10000
 details_hash["battery"] = battery_hash
 
@@ -58,9 +58,9 @@ keyboard_hash["backlit?"] = true
 keyboard_hash["numpad?"] = true
 details_hash["keyboard"] = keyboard_hash
 
-details_hash["display_ports"] = ["HDMI", "DVI"]
+details_hash["display ports"] = ["HDMI", "DVI"]
 
-details_hash["other_ports"] = ["USB-C", "USB3.1", "SD"]
+details_hash["other ports"] = ["USB-C", "USB3.1", "SD"]
 
 upgrade_hash = Hash.new
 upgrade_hash["max_ram"] = 64
@@ -77,6 +77,8 @@ store_computer(sample_computer)
 comp_obj = load_computer(sample_computer.name)
 
 # puts comp_obj.pretty_inspect
-puts comp_obj.get_aspect("processor", "name")
+puts comp_obj.get_aspect("os")
+
+puts find_superlative("min", "processor", "base clock", [comp_obj]).inspect
 
 #puts comp_obj.pretty_inspect

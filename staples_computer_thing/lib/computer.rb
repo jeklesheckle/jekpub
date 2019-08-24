@@ -73,12 +73,43 @@ def create_computer(name, details_hash)
     details_hash["upgrade_specs"], details_hash["peripherals"])
 end
 
+# finds the Computer(s) with the highest value for a particular numerical
+# aspect. Returns as an array of Computers.
+def find_superlative(min_or_max, key1, key2 = nil, comp_array)
+  if min_or_max == "min" then
+    for comp in comp_array do
+      min = Float::MAX
+      mins = []
+      aspect_val = comp.get_aspect(key1, key2)
 
-# finds all computers in a given array of computers that fit a certain criteria.
-#
-# def find_all_computers_that(key1, key2, >/</==, value)
- #### maybe have a get_aspect function that takes those keys?
+      if aspect_val < min then
+        mins = [comp]
+      elsif aspect_val == min then
+        mins << comp
+      end
+    end
 
+    return mins
+
+  elsif min_or_max == "max" then
+    for comp in comp_array do
+      max = Float::MIN
+      max = []
+      aspect_val = comp.get_aspect(key1, key2)
+
+      if aspect_val < max then
+        max = [comp]
+      elsif aspect_val == max then
+        max << comp
+      end
+    end
+
+    return max
+
+  else
+    raise ArgumentError.new "min_or_max was neither \"min\" nor \"max\""
+  end
+end
 
 
 =begin
