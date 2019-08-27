@@ -470,3 +470,5 @@ add_word_to_png(png, ALL_CHARACTERS, dire_score, dire_bar_label_x, X_AXIS_Y - di
 
 # save the file
 png.save(IMG_NAME, :interlace => true)
+
+puts "Graph saved in winrates.png"
