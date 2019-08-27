@@ -1,4 +1,4 @@
-#A tool to manage computer SKUs#
+# A tool to manage computer SKUs
 While selling computers at Staples, I found that I often lacked information on
 the intimate details of some of our models. There was also no way to quickly
 compile a list of all of our computers that fit certain criteria. This project
